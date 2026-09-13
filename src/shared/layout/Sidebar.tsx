@@ -1,10 +1,20 @@
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
+import { LogOut } from 'lucide-react'
+import { ROUTES } from '@/app/routes'
 import { CIUDADANO_ACTUAL } from '@/services/ciudadanos'
+import { cerrarSesion } from '@/services/sesion'
 import { formatCi, iniciales } from '@/shared/lib/format'
 import { NAV } from './nav'
 import { ReiniciarDemo } from './ReiniciarDemo'
 
 export function Sidebar() {
+  const navegar = useNavigate()
+
+  function salir() {
+    cerrarSesion()
+    navegar(ROUTES.login, { replace: true })
+  }
+
   return (
     <aside className="sticky top-0 hidden h-screen w-[260px] shrink-0 flex-col overflow-y-auto bg-sidebar p-5 text-white md:flex">
       <div className="mb-6 px-1">
@@ -44,6 +54,9 @@ export function Sidebar() {
       <div className="flex flex-col px-1 text-xs text-gray-600">
         <span>Prometeo © 2026</span>
         <ReiniciarDemo />
+        <button onClick={salir} className="mt-2 inline-flex items-center gap-1.5 text-xs text-gray-600 transition hover:text-gray-300">
+          <LogOut size={12} /> Cerrar sesión
+        </button>
       </div>
     </aside>
   )

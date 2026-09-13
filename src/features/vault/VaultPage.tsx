@@ -1,11 +1,13 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FolderOpen, Upload } from 'lucide-react'
-import type { Documento, EstadoDocumento } from '@/shared/types/domain'
+import type { Documento, EstadoDocumento, Emisor } from '@/shared/types/domain'
+import { vinculosRepo } from '@/services/vinculos'
 import { Button, EmptyState, SkeletonCard } from '@/shared/ui'
 import { useDocumentos } from './hooks/useDocumentos'
 import { DocumentoCard } from './components/DocumentoCard'
 import { SubirDocumentoModal } from './components/SubirDocumentoModal'
 import { VerDocumentoModal } from './components/VerDocumentoModal'
+import { EnviarAbogadoModal } from './components/EnviarAbogadoModal'
 
 type Filtro = 'todos' | EstadoDocumento
 
@@ -21,8 +23,14 @@ export function VaultPage() {
   const [filtro, setFiltro] = useState<Filtro>('todos')
   const [subiendo, setSubiendo] = useState(false)
   const [viendo, setViendo] = useState<Documento | null>(null)
+  const [enviando, setEnviando] = useState<Documento | null>(null)
+  const [emisores, setEmisores] = useState<Emisor[]>([])
   const docs = datos ?? []
   const visibles = filtro === 'todos' ? docs : docs.filter((d) => d.estado === filtro)
+
+  useEffect(() => {
+    vinculosRepo.listarEmisores().then(setEmisores)
+  }, [])
 
   return (
     <div className="space-y-6">
@@ -52,12 +60,13 @@ export function VaultPage() {
         <EmptyState icono={FolderOpen} titulo="Nada en este filtro" descripcion="No tenés documentos con ese estado." />
       ) : (
         <div className="grid gap-4 md:grid-cols-2">
-          {visibles.map((d) => <DocumentoCard key={d.id} doc={d} onVer={setViendo} />)}
+          {visibles.map((d) => <DocumentoCard key={d.id} doc={d} onVer={setViendo} onEnviar={setEnviando} />)}
         </div>
       )}
 
       <SubirDocumentoModal abierto={subiendo} onCerrar={() => setSubiendo(false)} onGuardado={recargar} />
       <VerDocumentoModal doc={viendo} onCerrar={() => setViendo(null)} />
+      <EnviarAbogadoModal doc={enviando} emisores={emisores} onCerrar={() => setEnviando(null)} />
     </div>
   )
 }

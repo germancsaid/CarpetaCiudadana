@@ -1,18 +1,10 @@
-import { useState } from 'react'
-import { Eye, Share2, MoreVertical, Check } from 'lucide-react'
+import { Eye, Send, MoreVertical } from 'lucide-react'
 import type { Documento } from '@/shared/types/domain'
 import { formatFecha } from '@/shared/lib/format'
 import { textoVencimiento } from '@/shared/lib/vencimientos'
 import { Badge, Button, Card, Icono } from '@/shared/ui'
 
-export function DocumentoCard({ doc, onVer }: { doc: Documento; onVer: (d: Documento) => void }) {
-  const [compartido, setCompartido] = useState(false)
-
-  function compartir() {
-    setCompartido(true)
-    setTimeout(() => setCompartido(false), 2000)
-  }
-
+export function DocumentoCard({ doc, onVer, onEnviar }: { doc: Documento; onVer: (d: Documento) => void; onEnviar: (d: Documento) => void }) {
   return (
     <Card className="flex flex-col p-5">
       <div className="flex items-start gap-3">
@@ -43,9 +35,7 @@ export function DocumentoCard({ doc, onVer }: { doc: Documento; onVer: (d: Docum
 
       <div className="mt-4 flex items-center gap-2">
         <Button tamano="sm" variante="secundario" iconoIzq={<Eye size={14} />} onClick={() => onVer(doc)}>Ver</Button>
-        <Button tamano="sm" variante="secundario" iconoIzq={compartido ? <Check size={14} /> : <Share2 size={14} />} onClick={compartir}>
-          {compartido ? 'Enlace copiado' : 'Compartir'}
-        </Button>
+        <Button tamano="sm" variante="secundario" iconoIzq={<Send size={14} />} onClick={() => onEnviar(doc)}>Enviar a un abogado</Button>
         <button aria-label="Más opciones" className="ml-auto flex size-9 items-center justify-center rounded-control text-ink-muted hover:bg-page">
           <MoreVertical size={16} />
         </button>
