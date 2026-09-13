@@ -4,6 +4,8 @@ import { AppShell } from '@/shared/layout/AppShell'
 import { Placeholder } from '@/shared/ui'
 import { TramitesPage } from '@/features/tramites'
 import { RecaudacionPage } from '@/features/recaudacion'
+import { VaultPage } from '@/features/vault'
+import { VinculosPage } from '@/features/vinculos'
 
 /**
  * Cada feature exporta su página desde src/features/<nombre>/index.ts.
@@ -17,8 +19,8 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <Navigate to={ROUTES.inicio} replace /> },
       { path: ROUTES.inicio, element: <Placeholder title="Inicio" /> },
-      { path: ROUTES.vault, element: <Placeholder title="Mi Carpeta" /> },
-      { path: ROUTES.vinculos, element: <Placeholder title="Vínculos Tokenizados" /> },
+      { path: ROUTES.vault, element: <VaultPage /> },
+      { path: ROUTES.vinculos, element: <VinculosPage /> },
       { path: ROUTES.tramites, element: <TramitesPage /> },
       { path: ROUTES.vehiculo, element: <Placeholder title="Caso: Vehículo" /> },
       { path: ROUTES.verificador, element: <Placeholder title="Panel Verificador" /> },

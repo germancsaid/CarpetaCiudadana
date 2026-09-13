@@ -1,0 +1,1 @@
+export { VinculosPage } from './VinculosPage'
