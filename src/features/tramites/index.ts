@@ -1,0 +1,1 @@
+export { TramitesPage } from './TramitesPage'
