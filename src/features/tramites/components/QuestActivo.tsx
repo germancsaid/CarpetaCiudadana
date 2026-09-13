@@ -3,20 +3,37 @@ import { Clock, Coins, Landmark } from 'lucide-react'
 import type { Tramite } from '@/shared/types/domain'
 import { progreso, tramitesRepo } from '@/services/tramites'
 import { firmarAnteNotaria, pagarArancel, recibirCertificadoDiprove, ORDEN_PASO } from '@/services/traspaso'
+import { documentosRepo } from '@/services/documentos'
+import { CIUDADANO_ACTUAL } from '@/services/ciudadanos'
+import { CARLOS, MARIA, VEHICULO } from '@/mocks/datos'
 import { esperar, DEMORA } from '@/shared/lib/simular'
 import { formatBs } from '@/shared/lib/format'
 import { Card, ProgressSegments } from '@/shared/ui'
 import { PasoItem } from './PasoItem'
 import { ValidacionQr } from './ValidacionQr'
+import { EsperaContraparte } from './EsperaContraparte'
+import { FirmaDigital } from './FirmaDigital'
+import { PagoQrFlotante } from './PagoQrFlotante'
+import { EstadoPartes } from './EstadoPartes'
+import { FaceIdFinal } from './FaceIdFinal'
 
 interface QuestActivoProps {
   tramite: Tramite
   onCambio: () => void
 }
 
+/** Fuente corta para el mensaje de "esperando validación de <fuente>". */
+function fuenteCorta(fuente: string): string {
+  if (fuente.includes('Abogados')) return 'el Consorcio de Abogados'
+  if (fuente.includes('Notaría')) return 'la Notaría'
+  return fuente
+}
+
 export function QuestActivo({ tramite, onCambio }: QuestActivoProps) {
   const [ocupado, setOcupado] = useState<number | null>(null)
   const [aviso, setAviso] = useState<string | null>(null)
+  const [contraparteOk, setContraparteOk] = useState<Record<string, boolean>>({})
+  const [pagoConfirmado, setPagoConfirmado] = useState<Record<string, boolean>>({})
   const pct = progreso(tramite)
   const hechos = tramite.pasos.filter((p) => p.estado === 'completado').length
   const esTraspaso = tramite.tipo === 'traspaso_vehicular'
@@ -33,6 +50,25 @@ export function QuestActivo({ tramite, onCambio }: QuestActivoProps) {
     }
   }
 
+  /** Genera el archivo de compraventa firmado, con sello notarial digital, y lo guarda en la carpeta del vendedor. */
+  async function generarContratoFirmado() {
+    await documentosRepo.crear({
+      ciudadanoId: CIUDADANO_ACTUAL.id,
+      nombre: 'Contrato de Compraventa — Firmado',
+      tipo: 'Notarial',
+      icono: 'file-signature',
+      estado: 'vigente',
+      emitidoEn: new Date().toISOString(),
+      venceEn: null,
+      camposOcr: {
+        Vendedor: CARLOS.nombreCompleto,
+        Compradora: MARIA.nombreCompleto,
+        Bien: `${VEHICULO.marca} ${VEHICULO.modelo} ${VEHICULO.anio} — ${VEHICULO.placa}`,
+        Precio: `USD ${VEHICULO.precioUsd.toLocaleString('es-BO')}`,
+      },
+    })
+  }
+
   const accionesTraspaso = (orden: number) => {
     if (!esTraspaso) return {}
     if (orden === ORDEN_PASO.antecedentes)
@@ -41,30 +77,10 @@ export function QuestActivo({ tramite, onCambio }: QuestActivoProps) {
           onClick: () => ejecutar(orden, () => recibirCertificadoDiprove(tramite), DEMORA.verificacion) },
         enlace: { etiqueta: 'Ver estado en DIPROVE', href: 'https://www.diprove.gob.bo' },
       }
-    // Libre Gravamen, Contrato, Firma ante Notaría y Pago del arancel usan el
-    // flujo con QR + check (ver ValidacionQr más abajo) en vez de un botón
-    // simple — no devuelven `accion` para que PasoItem no dibuje uno.
+    // Libre Gravamen, Contrato, Firma ante Notaría y Pago del arancel se
+    // resuelven con los paneles de abajo (espera de contraparte, firma o
+    // QR) en vez de un botón simple — no devuelven `accion`.
     return {}
-  }
-
-  /** Config del paso que, si está en progreso, se resuelve con QR + check en vez de un botón. */
-  function pasoConQr(p: Tramite['pasos'][number]): { etiqueta: string; onValidado: () => Promise<void> } | null {
-    if (!esTraspaso) return null
-    if (p.orden === ORDEN_PASO.libreGravamen)
-      return { etiqueta: 'Escaneá para verificar el vínculo tokenizado', onValidado: () => ejecutar(p.orden, () => tramitesRepo.completarPaso(p.id), 0) }
-    if (p.orden === ORDEN_PASO.contrato)
-      return { etiqueta: 'Escaneá para confirmar la firma del contrato', onValidado: () => ejecutar(p.orden, () => tramitesRepo.completarPaso(p.id), 0) }
-    if (p.orden === ORDEN_PASO.firmaNotaria)
-      return {
-        etiqueta: 'Escaneá para firmar digitalmente ante Notaría',
-        onValidado: () => ejecutar(p.orden, async () => {
-          const h = await firmarAnteNotaria(tramite)
-          setAviso(`La Alcaldía liquidó el arancel de traspaso: ${formatBs(h.totalBs)}. Ya aparece en el panel de Recaudación.`)
-        }, 0),
-      }
-    if (p.orden === ORDEN_PASO.pagoArancel)
-      return { etiqueta: 'Escaneá para pagar el arancel', onValidado: () => ejecutar(p.orden, () => pagarArancel(tramite), 0) }
-    return null
   }
 
   return (
@@ -86,6 +102,8 @@ export function QuestActivo({ tramite, onCambio }: QuestActivoProps) {
         </div>
       </div>
 
+      {esTraspaso && <EstadoPartes tramite={tramite} />}
+
       {aviso && (
         <div className="flex items-start gap-3 border-b border-border bg-success-light px-5 py-3 text-sm text-success-text">
           <Landmark size={16} className="mt-0.5 shrink-0" />{aviso}
@@ -94,18 +112,55 @@ export function QuestActivo({ tramite, onCambio }: QuestActivoProps) {
 
       <ol className="space-y-3 p-5">
         {tramite.pasos.map((p) => {
-          const qr = p.estado === 'en_progreso' ? pasoConQr(p) : null
+          const enProgreso = p.estado === 'en_progreso'
+          const necesitaContraparte = esTraspaso && enProgreso && (p.orden === ORDEN_PASO.libreGravamen || p.orden === ORDEN_PASO.contrato)
+          const contraparteLista = !necesitaContraparte || contraparteOk[p.id]
+
           return (
             <Fragment key={p.id}>
               <PasoItem paso={p} {...accionesTraspaso(p.orden)} />
-              {qr && (
+
+              {esTraspaso && enProgreso && necesitaContraparte && !contraparteLista && (
+                <li className="list-none pl-12">
+                  <EsperaContraparte fuente={fuenteCorta(p.fuente)} onOk={() => setContraparteOk((s) => ({ ...s, [p.id]: true }))} />
+                </li>
+              )}
+
+              {esTraspaso && enProgreso && contraparteLista && (p.orden === ORDEN_PASO.libreGravamen || p.orden === ORDEN_PASO.contrato) && (
                 <li className="list-none pl-12">
                   <ValidacionQr
-                    valor={`CARPETACIUDADANA|TRAMITE|${tramite.id}|PASO:${p.id}|TOTAL_BS:${p.montoBs ?? tramite.costoEstimadoBs}`}
-                    montoBs={p.montoBs}
-                    etiqueta={qr.etiqueta}
-                    onValidado={qr.onValidado}
+                    valor={`CARPETACIUDADANA|TRAMITE|${tramite.id}|PASO:${p.id}`}
+                    etiqueta={p.orden === ORDEN_PASO.libreGravamen ? 'Escaneá para verificar el vínculo tokenizado' : 'Escaneá para confirmar la firma del contrato'}
+                    onValidado={() => ejecutar(p.orden, () => tramitesRepo.completarPaso(p.id), 0)}
                   />
+                </li>
+              )}
+
+              {esTraspaso && enProgreso && p.orden === ORDEN_PASO.firmaNotaria && (
+                <li className="list-none pl-12">
+                  <FirmaDigital
+                    onConfirmada={() => ejecutar(p.orden, async () => {
+                      const h = await firmarAnteNotaria(tramite)
+                      await generarContratoFirmado()
+                      setAviso(`La Alcaldía liquidó el arancel de traspaso: ${formatBs(h.totalBs)}. Ya aparece en el panel de Recaudación, y el contrato firmado quedó en Mi Carpeta.`)
+                    }, 0)}
+                  />
+                </li>
+              )}
+
+              {esTraspaso && enProgreso && p.orden === ORDEN_PASO.pagoArancel && !pagoConfirmado[p.id] && (
+                <li className="list-none pl-12">
+                  <PagoQrFlotante
+                    valor={`CARPETACIUDADANA|TRAMITE|${tramite.id}|PASO:${p.id}|TOTAL_BS:${p.montoBs ?? tramite.costoEstimadoBs}`}
+                    montoBs={p.montoBs ?? tramite.costoEstimadoBs}
+                    onPagoRecibido={() => setPagoConfirmado((s) => ({ ...s, [p.id]: true }))}
+                  />
+                </li>
+              )}
+
+              {esTraspaso && enProgreso && p.orden === ORDEN_PASO.pagoArancel && pagoConfirmado[p.id] && (
+                <li className="list-none pl-12">
+                  <FaceIdFinal onEnviado={() => ejecutar(p.orden, () => pagarArancel(tramite), 0)} />
                 </li>
               )}
             </Fragment>

@@ -2,7 +2,8 @@ import { useState } from 'react'
 import { ScanLine } from 'lucide-react'
 import { formatBs } from '@/shared/lib/format'
 import { esperar } from '@/shared/lib/simular'
-import { Button, CheckAnimado, QrCode, Spinner } from '@/shared/ui'
+import { Button, CheckAnimado, QrCode } from '@/shared/ui'
+import { EscaneoTelefono } from './EscaneoTelefono'
 
 type Fase = 'qr' | 'validando' | 'ok'
 
@@ -21,7 +22,7 @@ export function ValidacionQr({ valor, montoBs, etiqueta = 'Escaneá para validar
 
   async function simularEscaneo() {
     setFase('validando')
-    await esperar(1100)
+    await esperar(1500)
     setFase('ok')
     await esperar(700)
     await onValidado()
@@ -38,8 +39,8 @@ export function ValidacionQr({ valor, montoBs, etiqueta = 'Escaneá para validar
           </div>
         </div>
       ) : fase === 'validando' ? (
-        <div className="flex flex-1 flex-col items-center gap-2 py-2 sm:flex-row sm:gap-4">
-          <Spinner className="size-8 text-accent" />
+        <div className="flex flex-1 flex-col items-center gap-3 py-2 sm:flex-row sm:gap-5">
+          <EscaneoTelefono />
           <div className="text-sm font-medium text-ink">Validando…</div>
         </div>
       ) : (

@@ -1,4 +1,4 @@
-import { UserRound } from 'lucide-react'
+import { Stamp, UserRound } from 'lucide-react'
 import type { Documento } from '@/shared/types/domain'
 import { Icono, QrCode } from '@/shared/ui'
 
@@ -11,7 +11,7 @@ import { Icono, QrCode } from '@/shared/ui'
  * contenido real al abrir "Ver documento".
  */
 
-type Estilo = 'nacional' | 'transito' | 'tributario' | 'municipal' | 'empresarial' | 'civil'
+type Estilo = 'nacional' | 'transito' | 'tributario' | 'municipal' | 'empresarial' | 'civil' | 'notarial'
 
 const ESTILO_POR_TIPO: Record<string, Estilo> = {
   'Identidad Personal': 'nacional',
@@ -21,6 +21,7 @@ const ESTILO_POR_TIPO: Record<string, Estilo> = {
   'Alcaldía Santa Cruz': 'municipal',
   FUNDEMPRESA: 'empresarial',
   'Estado Civil': 'civil',
+  Notarial: 'notarial',
 }
 
 const FRANJA: Record<Estilo, string> = {
@@ -31,6 +32,7 @@ const FRANJA: Record<Estilo, string> = {
   municipal: 'bg-gradient-to-r from-[#1d7a37] to-[#0f4d21]',
   empresarial: 'bg-gradient-to-r from-[#1d1d1f] to-[#3b3f4a]',
   civil: 'bg-gradient-to-r from-ink-secondary to-ink',
+  notarial: 'bg-gradient-to-r from-[#6b21a8] to-[#9a3412]',
 }
 
 const ENTIDAD: Record<Estilo, string> = {
@@ -40,6 +42,7 @@ const ENTIDAD: Record<Estilo, string> = {
   municipal: 'Gobierno Autónomo Municipal de Santa Cruz de la Sierra',
   empresarial: 'FUNDEMPRESA — Registro de Comercio',
   civil: 'Servicio de Registro Cívico',
+  notarial: 'Notaría certificada · Firma digital',
 }
 
 export function DocumentoPreview({ doc }: { doc: Documento }) {
@@ -89,6 +92,18 @@ export function DocumentoPreview({ doc }: { doc: Documento }) {
           <QrCode valor={`CARPETACIUDADANA|DOC:${doc.id}|${doc.nombre}`} tamano={72} etiqueta="Verificación" />
         </div>
       </div>
+
+      {estilo === 'notarial' && (
+        <div className="flex items-center gap-3 border-t border-dashed border-border bg-card px-5 py-3">
+          <div className="flex size-11 shrink-0 -rotate-6 items-center justify-center rounded-full border-2 border-[#6b21a8]/60 text-[#6b21a8]">
+            <Stamp size={20} />
+          </div>
+          <div className="text-xs text-ink-muted">
+            <div className="font-semibold text-[#6b21a8]">Sello digital notarial</div>
+            Firmado y validado electrónicamente — equivalente a firma ante Notaría
+          </div>
+        </div>
+      )}
 
       <div className="flex items-center justify-between border-t border-border bg-card px-5 py-2.5 text-[10px] text-ink-muted">
         <span>Documento ID {doc.id.slice(0, 8).toUpperCase()}</span>

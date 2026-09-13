@@ -1,6 +1,6 @@
 import {
   UserCircle, FileText, Building, Car, Briefcase, IdCard, MapPin, Store,
-  HeartPulse, HardHat, Home, FileBadge, File, type LucideIcon,
+  HeartPulse, HardHat, Home, FileBadge, FileSignature, File, type LucideIcon,
 } from 'lucide-react'
 
 /** Mapa nombre (guardado en DB) → componente. Agregar acá si un doc/trámite usa un icono nuevo. */
@@ -17,6 +17,7 @@ const ICONOS: Record<string, LucideIcon> = {
   'hard-hat': HardHat,
   home: Home,
   'file-badge': FileBadge,
+  'file-signature': FileSignature,
 }
 
 interface IconoProps {
