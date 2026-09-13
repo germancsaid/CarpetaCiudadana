@@ -16,19 +16,19 @@ export function Sidebar() {
   }
 
   return (
-    <aside className="sticky top-0 hidden h-screen w-[260px] shrink-0 flex-col overflow-y-auto bg-sidebar p-5 text-white md:flex">
+    <aside className="sticky top-0 hidden h-screen w-[260px] shrink-0 flex-col overflow-y-auto border-r border-border bg-card p-5 text-ink md:flex">
       <div className="mb-6 px-1">
         <div className="text-lg font-bold tracking-tight">CarpetaCiudadana</div>
-        <div className="text-xs text-gray-400">Bolivia Digital</div>
+        <div className="text-xs text-ink-muted">Bolivia Digital</div>
       </div>
 
-      <div className="mb-6 flex items-center gap-3 rounded-lg bg-white/5 p-3">
-        <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-accent text-sm font-semibold">
+      <div className="mb-6 flex items-center gap-3 rounded-lg bg-card-2 p-3">
+        <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-accent text-sm font-semibold text-white">
           {iniciales(CIUDADANO_ACTUAL.nombreCompleto)}
         </div>
         <div className="min-w-0">
           <div className="truncate text-sm font-medium">{CIUDADANO_ACTUAL.nombreCompleto.split(' ').slice(0, 2).join(' ')}</div>
-          <div className="text-xs text-gray-400">
+          <div className="text-xs text-ink-muted">
             CI {formatCi(CIUDADANO_ACTUAL.ci, CIUDADANO_ACTUAL.ciDepartamento)}
           </div>
         </div>
@@ -41,7 +41,7 @@ export function Sidebar() {
             to={to}
             className={({ isActive }) =>
               `flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm transition ${
-                isActive ? 'bg-accent text-white' : 'text-gray-400 hover:text-white'
+                isActive ? 'bg-accent text-white' : 'text-ink-secondary hover:bg-card-2 hover:text-ink'
               }`
             }
           >
@@ -51,10 +51,10 @@ export function Sidebar() {
         ))}
       </nav>
 
-      <div className="flex flex-col px-1 text-xs text-gray-600">
+      <div className="flex flex-col px-1 text-xs text-ink-muted">
         <span>Prometeo © 2026</span>
         <ReiniciarDemo />
-        <button onClick={salir} className="mt-2 inline-flex items-center gap-1.5 text-xs text-gray-600 transition hover:text-gray-300">
+        <button onClick={salir} className="mt-2 inline-flex items-center gap-1.5 text-xs text-ink-muted transition hover:text-ink">
           <LogOut size={12} /> Cerrar sesión
         </button>
       </div>

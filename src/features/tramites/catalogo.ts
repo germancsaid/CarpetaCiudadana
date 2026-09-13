@@ -41,6 +41,16 @@ const REQUISITOS: Record<string, { nombre: string; fuente: string; cubrePorDoc?:
     { nombre: 'Factura de servicio del domicilio', fuente: 'Solicitante' },
     { nombre: 'Registro en Oficina Virtual', fuente: 'SIN' },
   ],
+  // Mismo orden que ORDEN_PASO en services/traspaso.ts (1 a 6) — así las
+  // acciones especiales (DIPROVE, firma, pago con QR) enganchan también acá.
+  traspaso_vehicular: [
+    { nombre: 'RUAT Municipal vigente', fuente: 'Alcaldía Santa Cruz', cubrePorDoc: 'RUAT — Vehículo 2026' },
+    { nombre: 'Certificado de Libre Gravamen', fuente: 'Vínculo tokenizado — Colegio de Abogados' },
+    { nombre: 'Contrato de Compraventa firmado', fuente: 'Emisor certificado' },
+    { nombre: 'Certificado de Antecedentes del vendedor', fuente: 'DIPROVE — Policía Boliviana' },
+    { nombre: 'Firma digital ante Notaría', fuente: 'Notaría certificada por Alcaldía' },
+    { nombre: 'Pago de arancel de traspaso', fuente: 'Alcaldía Santa Cruz', montoBs: 450 },
+  ],
 }
 
 /**

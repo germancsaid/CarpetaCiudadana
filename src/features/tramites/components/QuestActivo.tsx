@@ -1,12 +1,13 @@
-import { useState } from 'react'
+import { Fragment, useState } from 'react'
 import { Clock, Coins, Landmark } from 'lucide-react'
 import type { Tramite } from '@/shared/types/domain'
-import { progreso } from '@/services/tramites'
+import { progreso, tramitesRepo } from '@/services/tramites'
 import { firmarAnteNotaria, pagarArancel, recibirCertificadoDiprove, ORDEN_PASO } from '@/services/traspaso'
 import { esperar, DEMORA } from '@/shared/lib/simular'
 import { formatBs } from '@/shared/lib/format'
 import { Card, ProgressSegments } from '@/shared/ui'
 import { PasoItem } from './PasoItem'
+import { ValidacionQr } from './ValidacionQr'
 
 interface QuestActivoProps {
   tramite: Tramite
@@ -40,20 +41,30 @@ export function QuestActivo({ tramite, onCambio }: QuestActivoProps) {
           onClick: () => ejecutar(orden, () => recibirCertificadoDiprove(tramite), DEMORA.verificacion) },
         enlace: { etiqueta: 'Ver estado en DIPROVE', href: 'https://www.diprove.gob.bo' },
       }
-    if (orden === ORDEN_PASO.firmaNotaria)
-      return {
-        accion: { etiqueta: 'Firmar digitalmente', cargando: ocupado === orden,
-          onClick: () => ejecutar(orden, async () => {
-            const h = await firmarAnteNotaria(tramite)
-            setAviso(`La Alcaldía liquidó el arancel de traspaso: ${formatBs(h.totalBs)}. Ya aparece en el panel de Recaudación.`)
-          }, DEMORA.verificacion) },
-      }
-    if (orden === ORDEN_PASO.pagoArancel)
-      return {
-        accion: { etiqueta: 'Pagar ahora', cargando: ocupado === orden,
-          onClick: () => ejecutar(orden, () => pagarArancel(tramite), DEMORA.verificacion) },
-      }
+    // Libre Gravamen, Contrato, Firma ante Notaría y Pago del arancel usan el
+    // flujo con QR + check (ver ValidacionQr más abajo) en vez de un botón
+    // simple — no devuelven `accion` para que PasoItem no dibuje uno.
     return {}
+  }
+
+  /** Config del paso que, si está en progreso, se resuelve con QR + check en vez de un botón. */
+  function pasoConQr(p: Tramite['pasos'][number]): { etiqueta: string; onValidado: () => Promise<void> } | null {
+    if (!esTraspaso) return null
+    if (p.orden === ORDEN_PASO.libreGravamen)
+      return { etiqueta: 'Escaneá para verificar el vínculo tokenizado', onValidado: () => ejecutar(p.orden, () => tramitesRepo.completarPaso(p.id), 0) }
+    if (p.orden === ORDEN_PASO.contrato)
+      return { etiqueta: 'Escaneá para confirmar la firma del contrato', onValidado: () => ejecutar(p.orden, () => tramitesRepo.completarPaso(p.id), 0) }
+    if (p.orden === ORDEN_PASO.firmaNotaria)
+      return {
+        etiqueta: 'Escaneá para firmar digitalmente ante Notaría',
+        onValidado: () => ejecutar(p.orden, async () => {
+          const h = await firmarAnteNotaria(tramite)
+          setAviso(`La Alcaldía liquidó el arancel de traspaso: ${formatBs(h.totalBs)}. Ya aparece en el panel de Recaudación.`)
+        }, 0),
+      }
+    if (p.orden === ORDEN_PASO.pagoArancel)
+      return { etiqueta: 'Escaneá para pagar el arancel', onValidado: () => ejecutar(p.orden, () => pagarArancel(tramite), 0) }
+    return null
   }
 
   return (
@@ -82,9 +93,24 @@ export function QuestActivo({ tramite, onCambio }: QuestActivoProps) {
       )}
 
       <ol className="space-y-3 p-5">
-        {tramite.pasos.map((p) => (
-          <PasoItem key={p.id} paso={p} {...accionesTraspaso(p.orden)} />
-        ))}
+        {tramite.pasos.map((p) => {
+          const qr = p.estado === 'en_progreso' ? pasoConQr(p) : null
+          return (
+            <Fragment key={p.id}>
+              <PasoItem paso={p} {...accionesTraspaso(p.orden)} />
+              {qr && (
+                <li className="list-none pl-12">
+                  <ValidacionQr
+                    valor={`CARPETACIUDADANA|TRAMITE|${tramite.id}|PASO:${p.id}|TOTAL_BS:${p.montoBs ?? tramite.costoEstimadoBs}`}
+                    montoBs={p.montoBs}
+                    etiqueta={qr.etiqueta}
+                    onValidado={qr.onValidado}
+                  />
+                </li>
+              )}
+            </Fragment>
+          )
+        })}
       </ol>
     </Card>
   )

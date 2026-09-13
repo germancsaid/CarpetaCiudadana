@@ -32,7 +32,7 @@ export function ReiniciarDemo() {
   return (
     <>
       <button onClick={() => setAbierto(true)} title={`Modo: ${MODO_DEMO}`}
-              className="mt-2 inline-flex items-center gap-1.5 text-xs text-gray-600 transition hover:text-gray-300">
+              className="mt-2 inline-flex items-center gap-1.5 text-xs text-ink-muted transition hover:text-ink">
         <RotateCcw size={12} /> Reiniciar demo
       </button>
       <Modal abierto={abierto} onCerrar={() => !cargando && setAbierto(false)} titulo="¿Reiniciar la demo?"

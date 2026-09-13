@@ -50,40 +50,40 @@ export function LoginPage() {
   }
 
   return (
-    <div className={`relative flex min-h-screen items-center justify-center overflow-hidden bg-sidebar p-6 text-white transition-opacity duration-300 ${saliendo ? 'opacity-0' : 'opacity-100'}`}>
-      {/* Fondo: gradiente teal → navy con dos halos suaves */}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_color-mix(in_srgb,var(--c-accent)_38%,transparent),_transparent_55%),radial-gradient(ellipse_at_bottom_right,_rgb(26_60_120_/_0.55),_transparent_60%)]" />
+    <div className={`relative flex min-h-screen items-center justify-center overflow-hidden bg-page p-6 text-ink transition-opacity duration-300 ${saliendo ? 'opacity-0' : 'opacity-100'}`}>
+      {/* Fondo: halos suaves en tonos de acento, sobre blanco — como el hero de apple.com */}
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_color-mix(in_srgb,var(--c-accent)_14%,transparent),_transparent_55%),radial-gradient(ellipse_at_bottom_right,_color-mix(in_srgb,var(--c-accent)_10%,transparent),_transparent_60%)]" />
 
       <div className="relative w-full max-w-sm animate-aparecer">
         <div className="mb-10 text-center">
-          <div className="mx-auto mb-5 flex size-14 items-center justify-center rounded-2xl bg-white/10 backdrop-blur">
+          <div className="mx-auto mb-5 flex size-14 items-center justify-center rounded-2xl bg-accent text-white shadow-card">
             <ShieldCheck size={28} />
           </div>
-          <h1 className="text-[40px] leading-none font-bold tracking-[-0.02em]">CarpetaCiudadana</h1>
-          <p className="mt-2 text-white/60">Bolivia Digital · Santa Cruz</p>
+          <h1 className="text-[40px] leading-none font-bold tracking-[-0.02em] text-ink">CarpetaCiudadana</h1>
+          <p className="mt-2 text-ink-muted">Bolivia Digital · Santa Cruz</p>
         </div>
 
         {modo === 'biometria' ? (
           <div className="flex flex-col items-center gap-8">
             <button onClick={ingresarConHuella} aria-label="Ingresar con huella" disabled={fase !== 'reposo'}
-                    className="presionable rounded-full focus-visible:outline-white">
+                    className="presionable rounded-full focus-visible:outline-accent">
               <Biometria fase={fase} />
             </button>
-            <div className="min-h-6 text-center text-sm text-white/70" aria-live="polite">
+            <div className="min-h-6 text-center text-sm text-ink-secondary" aria-live="polite">
               {fase === 'reposo' && 'Tocá la huella para ingresar'}
               {fase === 'escaneando' && 'Verificando identidad…'}
               {fase === 'ok' && `Bienvenido, ${CIUDADANO_ACTUAL.nombreCompleto.split(' ')[0]}`}
             </div>
-            <Button tamano="lg" className="w-full !bg-white !text-sidebar" onClick={ingresarConHuella} disabled={fase !== 'reposo'}>
+            <Button tamano="lg" className="w-full" onClick={ingresarConHuella} disabled={fase !== 'reposo'}>
               Ingresar con mi Carpeta Ciudadana
             </Button>
-            <button onClick={() => setModo('credenciales')} className="text-sm text-white/55 underline-offset-4 hover:text-white hover:underline">
+            <button onClick={() => setModo('credenciales')} className="text-sm text-ink-muted underline-offset-4 hover:text-ink hover:underline">
               Ingresar con CI y contraseña
             </button>
           </div>
         ) : (
-          <form onSubmit={ingresarConCredenciales} noValidate className="rounded-sheet bg-white/8 p-6 backdrop-blur-lg">
-            <div className="space-y-4 [&_span]:!text-white/70 [&_input]:!bg-white/10 [&_input]:!text-white [&_input]:placeholder:!text-white/40">
+          <form onSubmit={ingresarConCredenciales} noValidate className="rounded-sheet border border-border bg-card p-6 shadow-card">
+            <div className="space-y-4">
               <Campo etiqueta="Carnet de Identidad" requerido>
                 <Input value={ci} onChange={(e) => setCi(e.target.value)} placeholder="8.234.567" autoComplete="username" />
               </Campo>
@@ -91,16 +91,16 @@ export function LoginPage() {
                 <Input type="password" value={clave} onChange={(e) => setClave(e.target.value)} placeholder="••••••••" autoComplete="current-password" />
               </Campo>
             </div>
-            <Button type="submit" tamano="lg" className="mt-6 w-full !bg-white !text-sidebar" cargando={fase !== 'reposo'} pulso>
+            <Button type="submit" tamano="lg" className="mt-6 w-full" cargando={fase !== 'reposo'} pulso>
               Ingresar
             </Button>
-            <button type="button" onClick={() => setModo('biometria')} className="mt-4 inline-flex items-center gap-1.5 text-sm text-white/55 hover:text-white">
+            <button type="button" onClick={() => setModo('biometria')} className="mt-4 inline-flex items-center gap-1.5 text-sm text-ink-muted hover:text-ink">
               <ArrowLeft size={14} /> Volver a la huella
             </button>
           </form>
         )}
 
-        <p className="mt-10 text-center text-xs text-white/35">Demo — la identidad se simula, no hay biometría real.</p>
+        <p className="mt-10 text-center text-xs text-ink-muted">Demo — la identidad se simula, no hay biometría real.</p>
       </div>
     </div>
   )

@@ -59,7 +59,7 @@ export function CatalogoTramites({ onCreado }: { onCreado: () => void }) {
                  <Button variante="secundario" onClick={cerrar}>Cancelar</Button>
                  <Button iconoIzq={<Sparkles size={16} />} onClick={analizar}>Sí, analizar mi carpeta</Button>
                </>
-             ) : fase === 'listo' ? <Button onClick={cerrar}>Ver mi trámite</Button> : undefined}>
+             ) : fase === 'listo' ? <Button onClick={() => { cerrar(); onCreado() }}>Ver mi trámite</Button> : undefined}>
         {fase === 'pregunta' && (
           <p className="text-sm text-ink-secondary">
             ¿Querés que analicemos tu carpeta y armemos el trámite automáticamente? Los requisitos que ya

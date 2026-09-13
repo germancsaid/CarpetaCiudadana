@@ -49,7 +49,7 @@ export function TramitesPage() {
         ) : <TramitesCompletados lista={completados} />
       )}
 
-      {tab === 'disponibles' && <CatalogoTramites onCreado={() => { recargar(); }} />}
+      {tab === 'disponibles' && <CatalogoTramites onCreado={() => { recargar(); setTab('progreso') }} />}
     </div>
   )
 }

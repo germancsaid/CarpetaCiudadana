@@ -381,6 +381,7 @@ export const CATALOGO_TRAMITES = [
   { tipo: 'permiso_construccion', nombre: 'Permiso de Construcción', emisor: 'Municipal', dias: 30, costoBs: 500, icono: 'hard-hat' },
   { tipo: 'certificado_residencia', nombre: 'Certificado de Residencia', emisor: 'Municipal', dias: 3, costoBs: 0, icono: 'home' },
   { tipo: 'nit_nuevo', nombre: 'NIT Nuevo', emisor: 'SIN', dias: 5, costoBs: 0, icono: 'file-badge' },
+  { tipo: 'traspaso_vehicular', nombre: 'Venta de Vehículo', emisor: 'Municipal', dias: 3, costoBs: 450, icono: 'car' },
 ] as const
 
 // ── Vehículo del caso de uso ─────────────────────────────────────────────
