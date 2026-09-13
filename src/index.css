@@ -1,0 +1,42 @@
+@import 'tailwindcss';
+
+/*
+ * Design system — fuente de verdad de colores y tipografía.
+ * Usar SIEMPRE estos tokens vía clases Tailwind (bg-sidebar, text-accent, etc.).
+ * Nunca hardcodear hex en componentes. Ver docs/CONVENTIONS.md.
+ */
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+  --color-sidebar: #0f1117;
+  --color-page: #f7f8fa;
+  --color-card: #ffffff;
+  --color-border: #e2e5eb;
+
+  --color-accent: #1a5cff;
+  --color-accent-light: #eef2ff;
+  --color-accent-text: #1a3db5;
+
+  --color-success: #0ea87a;
+  --color-success-light: #e6f9f3;
+  --color-success-text: #076b4f;
+
+  --color-warning: #d97706;
+  --color-warning-light: #fef3e2;
+  --color-warning-text: #92520a;
+
+  --color-danger: #dc2626;
+  --color-danger-light: #fef2f2;
+  --color-danger-text: #991b1b;
+
+  --color-ink: #0f1117;
+  --color-ink-secondary: #3b3f4a;
+  --color-ink-muted: #727785;
+
+  --radius-card: 12px;
+  --radius-control: 8px;
+}
+
+body {
+  @apply bg-page text-ink font-sans antialiased;
+}
