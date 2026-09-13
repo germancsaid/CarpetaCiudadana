@@ -1,9 +1,14 @@
--- Seed del escenario de demo. Idempotente: se puede correr las veces que haga falta.
--- Los UUID coinciden con src/mocks/ids.ts — no cambiar uno sin el otro.
--- Las fechas son RELATIVAS a now() para que la demo siempre se vea fresca.
+-- Función para reiniciar la demo al estado inicial desde la app (botón "Reiniciar demo").
+-- Mismo contenido que supabase/seed.sql. Si cambiás uno, cambiá el otro.
+-- SECURITY DEFINER para que el rol anon pueda ejecutarla vía RPC.
 
-begin;
-
+create or replace function reset_demo()
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
 -- Limpieza (orden inverso a las dependencias)
 delete from actividades where true;
 delete from verificaciones where true;
@@ -117,5 +122,7 @@ insert into actividades (ciudadano_id, tipo, descripcion, ocurrido_en) values
   ('11111111-1111-4111-8111-111111111111', 'tramite', 'Trámite iniciado — Traspaso Vehicular', now() - interval '3 days'),
   ('11111111-1111-4111-8111-111111111111', 'vinculo', 'Token generado — Contrato Compraventa', now() - interval '3 days'),
   ('11111111-1111-4111-8111-111111111111', 'documento', 'Documento actualizado — Carnet de Identidad', now() - interval '7 days');
+end;
+$$;
 
-commit;
+grant execute on function reset_demo() to anon, authenticated;

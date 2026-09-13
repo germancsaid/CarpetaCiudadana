@@ -1,5 +1,6 @@
 import type { Tramite, PasoTramite } from '@/shared/types/domain'
 import { TRAMITE_TRASPASO, TRAMITES_COMPLETADOS } from '@/mocks/datos'
+import { cargar, guardar } from '@/mocks/almacen'
 import { supabase } from './supabase/client'
 import { aSnake, mapearFilas } from './mapeo'
 import { USAR_MOCKS } from './config'
@@ -29,12 +30,12 @@ export function pasoActual(t: Tramite): PasoTramite | undefined {
 
 // ── Mock ─────────────────────────────────────────────────────────────────
 
-const enMemoria: Tramite[] = [
-  structuredClone(TRAMITE_TRASPASO),
-  ...structuredClone(TRAMITES_COMPLETADOS),
-]
+const enMemoria = cargar<Tramite>('tramites', [TRAMITE_TRASPASO, ...TRAMITES_COMPLETADOS])
 const oyentes = new Set<() => void>()
-const notificar = () => oyentes.forEach((fn) => fn())
+const notificar = () => {
+  guardar('tramites', enMemoria)
+  oyentes.forEach((fn) => fn())
+}
 
 function buscarPaso(pasoId: string): { t: Tramite; paso: PasoTramite } | null {
   for (const t of enMemoria) {

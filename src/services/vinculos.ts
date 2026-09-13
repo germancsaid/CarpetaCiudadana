@@ -1,6 +1,7 @@
 import type { Vinculo, Emisor } from '@/shared/types/domain'
 import { estadoVinculoPorVencimiento } from '@/shared/lib/vencimientos'
 import { VINCULOS, EMISORES } from '@/mocks/datos'
+import { cargar, guardar } from '@/mocks/almacen'
 import { supabase } from './supabase/client'
 import { aSnake, mapearFilas } from './mapeo'
 import { USAR_MOCKS } from './config'
@@ -16,7 +17,7 @@ export interface VinculosRepo {
 const conEstadoFresco = (v: Vinculo): Vinculo =>
   v.estado === 'revocado' ? v : { ...v, estado: estadoVinculoPorVencimiento(v.venceEn) }
 
-const enMemoria: Vinculo[] = [...VINCULOS]
+const enMemoria = cargar<Vinculo>('vinculos', VINCULOS)
 
 const repoMock: VinculosRepo = {
   async listar(ciudadanoId) {
@@ -29,11 +30,13 @@ const repoMock: VinculosRepo = {
   async crear(v) {
     const nuevo: Vinculo = { ...v, id: crypto.randomUUID(), creadoEn: new Date().toISOString() }
     enMemoria.unshift(nuevo)
+    guardar('vinculos', enMemoria)
     return nuevo
   },
   async marcarVerificado(id) {
     const v = enMemoria.find((x) => x.id === id)
     if (v) v.ultimaVerificacionEn = new Date().toISOString()
+    guardar('vinculos', enMemoria)
   },
   async listarEmisores() {
     return EMISORES

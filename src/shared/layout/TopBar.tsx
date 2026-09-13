@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Bell, Search, X, AlertTriangle, ChevronRight, FileText, Link2 } from 'lucide-react'
 import { ROUTES } from '@/app/routes'
+import { textoVencimiento } from '@/shared/lib/vencimientos'
 import { documentosRepo } from '@/services/documentos'
 import { vinculosRepo } from '@/services/vinculos'
 import { CIUDADANO_ACTUAL } from '@/services/ciudadanos'
@@ -13,14 +14,30 @@ interface Notificacion {
   accion?: { etiqueta: string; to: string }
 }
 
-const NOTIFICACIONES_INICIALES: Notificacion[] = [
-  {
-    id: 'n1',
-    texto: 'Cert. Libre Gravamen vence en 8 días',
-    accion: { etiqueta: 'Renovar', to: ROUTES.vinculos },
-  },
-  { id: 'n2', texto: 'Matrícula de Comercio vence en 4 meses' },
-]
+/** Notificaciones derivadas de los vencimientos reales de documentos y vínculos. */
+async function calcularNotificaciones(): Promise<Notificacion[]> {
+  const [docs, vinculos] = await Promise.all([
+    documentosRepo.listar(CIUDADANO_ACTUAL.id),
+    vinculosRepo.listar(CIUDADANO_ACTUAL.id),
+  ])
+  const lista: Notificacion[] = []
+  for (const v of vinculos) {
+    if (v.estado === 'por_vencer')
+      lista.push({ id: `v-${v.id}`, texto: `${nombreCorto(v.tipoDocumento)} ${textoVencimiento(v.venceEn).toLowerCase()}`, accion: { etiqueta: 'Renovar', to: ROUTES.vinculos } })
+  }
+  for (const d of docs) {
+    if (d.estado === 'por_vencer')
+      lista.push({ id: `d-${d.id}`, texto: `${d.nombre} ${textoVencimiento(d.venceEn).toLowerCase()}`, accion: { etiqueta: 'Ver', to: ROUTES.vault } })
+    else if (d.estado === 'vencido')
+      lista.push({ id: `d-${d.id}`, texto: `${d.nombre} está vencido`, accion: { etiqueta: 'Renovar', to: ROUTES.vault } })
+  }
+  return lista
+}
+
+/** "Certificado de Libre Gravamen — Placa 2345-SCC" → "Cert. de Libre Gravamen" */
+function nombreCorto(tipo: string): string {
+  return tipo.split(' — ')[0].replace('Certificado', 'Cert.')
+}
 
 interface Resultado {
   id: string
@@ -142,9 +159,17 @@ function Buscador() {
 }
 
 function Notificaciones() {
-  const [lista, setLista] = useState(NOTIFICACIONES_INICIALES)
+  const [lista, setLista] = useState<Notificacion[]>([])
   const [abierto, setAbierto] = useState(false)
   const contenedor = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    let vigente = true
+    calcularNotificaciones().then((n) => vigente && setLista(n)).catch(() => {})
+    return () => {
+      vigente = false
+    }
+  }, [])
 
   useEffect(() => {
     const cerrar = (e: MouseEvent) => {

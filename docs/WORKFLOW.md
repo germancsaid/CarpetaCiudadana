@@ -15,9 +15,13 @@ npm run dev
 Proyecto: **carpeta-ciudadana** (`jqpjowojidbowsapmtgu`, sa-east-1). Esquema en `supabase/migrations/`,
 datos de demo en `supabase/seed.sql`. Ya está aplicado y cargado.
 
-**Resetear la demo al estado inicial** (antes de un ensayo, o si alguien rompió datos): correr
-`supabase/seed.sql` completo en el SQL Editor del dashboard. Es idempotente y usa fechas relativas
-a `now()`, así que la demo siempre se ve fresca ("hace 2 horas", "vence en 8 días").
+**Resetear la demo al estado inicial** (antes de un ensayo, o si alguien rompió datos): botón
+"Reiniciar demo" al pie del sidebar. Llama a la función `reset_demo()` (migración 0002), que es el
+mismo contenido que `supabase/seed.sql` con fechas relativas a `now()`, así que la demo siempre se ve
+fresca ("hace 2 horas", "vence en 8 días"). Si cambiás el seed, cambiá la función.
+
+**Modo offline:** `npm run dev:mocks` levanta la app en `localhost:5174` sin tocar Supabase. Es la
+red de seguridad del pitch (ver `docs/GUION_PITCH.md`).
 
 Si cambiás el esquema: nueva migración numerada en `supabase/migrations/`, actualizar
 `src/shared/types/domain.ts` y `docs/DATA_MODEL.md` en el mismo commit.

@@ -1,5 +1,6 @@
 import type { Verificacion } from '@/shared/types/domain'
 import { VERIFICACIONES } from '@/mocks/datos'
+import { cargar, guardar } from '@/mocks/almacen'
 import { supabase } from './supabase/client'
 import { aSnake, mapearFilas } from './mapeo'
 import { USAR_MOCKS } from './config'
@@ -10,7 +11,7 @@ export interface VerificacionesRepo {
   suscribir(alCambiar: () => void): () => void
 }
 
-const enMemoria: Verificacion[] = [...VERIFICACIONES]
+const enMemoria = cargar<Verificacion>('verificaciones', VERIFICACIONES)
 const oyentes = new Set<() => void>()
 
 const repoMock: VerificacionesRepo = {
@@ -20,6 +21,7 @@ const repoMock: VerificacionesRepo = {
   async registrar(v) {
     const nueva: Verificacion = { ...v, id: crypto.randomUUID(), verificadoEn: new Date().toISOString() }
     enMemoria.unshift(nueva)
+    guardar('verificaciones', enMemoria)
     oyentes.forEach((fn) => fn())
     return nueva
   },

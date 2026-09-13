@@ -14,6 +14,7 @@ automáticamente de cada transferencia de bienes (vehículos, inmuebles) para li
 4. `docs/DATA_MODEL.md` — entidades y tablas.
 5. `docs/RECAUDACION.md` — el módulo diferenciador.
 6. `docs/WORKFLOW.md` — cómo trabajamos en equipo con git.
+7. `docs/GUION_PITCH.md` — el guion de la demo; cualquier cambio de UI debe seguir funcionando con él.
 
 ## Stack (no agregar dependencias sin ADR en `docs/adr/`)
 
@@ -24,8 +25,9 @@ react-router-dom 7 · lucide-react · Supabase (Postgres + Realtime). Sin backen
 ## Comandos
 
 ```bash
-npm run dev      # http://localhost:5173
-npm run build    # tsc -b && vite build — debe pasar antes de cada PR
+npm run dev        # http://localhost:5173 — contra Supabase
+npm run dev:mocks  # http://localhost:5174 — offline, datos en memoria
+npm run build      # tsc -b && vite build — debe pasar antes de cada PR
 npm run lint     # oxlint
 ```
 

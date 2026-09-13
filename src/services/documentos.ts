@@ -1,6 +1,7 @@
 import type { Documento } from '@/shared/types/domain'
 import { estadoPorVencimiento } from '@/shared/lib/vencimientos'
 import { DOCUMENTOS } from '@/mocks/datos'
+import { cargar, guardar } from '@/mocks/almacen'
 import { supabase } from './supabase/client'
 import { aSnake, mapearFilas } from './mapeo'
 import { USAR_MOCKS } from './config'
@@ -16,7 +17,7 @@ const conEstadoFresco = (d: Documento): Documento => ({
   estado: estadoPorVencimiento(d.venceEn),
 })
 
-const enMemoria: Documento[] = [...DOCUMENTOS]
+const enMemoria = cargar<Documento>('documentos', DOCUMENTOS)
 
 const repoMock: DocumentosRepo = {
   async listar(ciudadanoId) {
@@ -25,6 +26,7 @@ const repoMock: DocumentosRepo = {
   async crear(doc) {
     const nuevo: Documento = { ...doc, id: crypto.randomUUID(), creadoEn: new Date().toISOString() }
     enMemoria.unshift(nuevo)
+    guardar('documentos', enMemoria)
     return nuevo
   },
 }

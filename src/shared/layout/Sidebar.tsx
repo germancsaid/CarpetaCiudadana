@@ -2,10 +2,11 @@ import { NavLink } from 'react-router-dom'
 import { CIUDADANO_ACTUAL } from '@/services/ciudadanos'
 import { formatCi, iniciales } from '@/shared/lib/format'
 import { NAV } from './nav'
+import { ReiniciarDemo } from './ReiniciarDemo'
 
 export function Sidebar() {
   return (
-    <aside className="hidden w-[260px] shrink-0 flex-col bg-sidebar p-5 text-white md:flex">
+    <aside className="sticky top-0 hidden h-screen w-[260px] shrink-0 flex-col overflow-y-auto bg-sidebar p-5 text-white md:flex">
       <div className="mb-6 px-1">
         <div className="text-lg font-bold tracking-tight">CarpetaCiudadana</div>
         <div className="text-xs text-gray-400">Bolivia Digital</div>
@@ -40,7 +41,10 @@ export function Sidebar() {
         ))}
       </nav>
 
-      <div className="px-1 text-xs text-gray-600">Prometeo © 2026</div>
+      <div className="flex flex-col px-1 text-xs text-gray-600">
+        <span>Prometeo © 2026</span>
+        <ReiniciarDemo />
+      </div>
     </aside>
   )
 }

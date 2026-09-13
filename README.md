@@ -25,6 +25,7 @@ npm run dev
 | [docs/DATA_MODEL.md](docs/DATA_MODEL.md) | Entidades y tablas |
 | [docs/RECAUDACION.md](docs/RECAUDACION.md) | Módulo diferenciador + guion del pitch |
 | [docs/WORKFLOW.md](docs/WORKFLOW.md) | Cómo trabajamos en equipo |
+| [docs/GUION_PITCH.md](docs/GUION_PITCH.md) | Guion de la demo, minuto a minuto, con plan B |
 | [docs/adr/](docs/adr/) | Decisiones de arquitectura |
 
 ## Stack

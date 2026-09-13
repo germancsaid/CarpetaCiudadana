@@ -1,4 +1,5 @@
 import type { HechoImponible } from '@/shared/types/domain'
+import { cargar, guardar } from '@/mocks/almacen'
 import { supabase } from './supabase/client'
 import { aSnake, mapearFilas } from './mapeo'
 import { USAR_MOCKS } from './config'
@@ -15,7 +16,7 @@ export interface HechosImponiblesRepo {
   suscribir(alCambiar: () => void): () => void
 }
 
-const enMemoria: HechoImponible[] = []
+const enMemoria = cargar<HechoImponible>('hechos_imponibles', [])
 
 const repoMock: HechosImponiblesRepo = {
   async listar(municipio) {
@@ -24,6 +25,7 @@ const repoMock: HechosImponiblesRepo = {
   async crear(h) {
     const nuevo: HechoImponible = { ...h, id: crypto.randomUUID() }
     enMemoria.unshift(nuevo)
+    guardar('hechos_imponibles', enMemoria)
     oyentes.forEach((fn) => fn())
     return nuevo
   },
@@ -33,6 +35,7 @@ const repoMock: HechosImponiblesRepo = {
       h.estado = 'pagado'
       h.pagadoEn = new Date().toISOString()
     }
+    guardar('hechos_imponibles', enMemoria)
     oyentes.forEach((fn) => fn())
   },
   suscribir(alCambiar) {
