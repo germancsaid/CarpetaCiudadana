@@ -1,0 +1,1 @@
+export { RecaudacionPage } from './RecaudacionPage'

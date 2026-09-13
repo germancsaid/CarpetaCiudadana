@@ -3,6 +3,7 @@ import { ROUTES } from './routes'
 import { AppShell } from '@/shared/layout/AppShell'
 import { Placeholder } from '@/shared/ui'
 import { TramitesPage } from '@/features/tramites'
+import { RecaudacionPage } from '@/features/recaudacion'
 
 /**
  * Cada feature exporta su página desde src/features/<nombre>/index.ts.
@@ -21,7 +22,7 @@ export const router = createBrowserRouter([
       { path: ROUTES.tramites, element: <TramitesPage /> },
       { path: ROUTES.vehiculo, element: <Placeholder title="Caso: Vehículo" /> },
       { path: ROUTES.verificador, element: <Placeholder title="Panel Verificador" /> },
-      { path: ROUTES.recaudacion, element: <Placeholder title="Recaudación Municipal" /> },
+      { path: ROUTES.recaudacion, element: <RecaudacionPage /> },
     ],
   },
 ])
