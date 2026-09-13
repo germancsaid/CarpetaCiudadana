@@ -42,7 +42,7 @@ export function TablaHechos({ hechos, onVerDetalle, reciente }: Props) {
                 <td className="px-5 py-3">
                   <div className="flex items-center gap-2">
                     {h.tipoBien === 'vehiculo' ? <Car size={16} className="shrink-0 text-ink-muted" /> : <Building2 size={16} className="shrink-0 text-ink-muted" />}
-                    <span className="font-medium text-ink">{h.descripcionBien}</span>
+                    <span className="font-medium whitespace-nowrap text-ink">{h.descripcionBien}</span>
                   </div>
                 </td>
                 <td className="px-5 py-3 text-right whitespace-nowrap">{formatBs(h.baseImponibleBs)}</td>
