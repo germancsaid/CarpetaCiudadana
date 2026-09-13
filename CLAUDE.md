@@ -35,10 +35,13 @@ npm run lint     # oxlint
 src/
   app/          router.tsx, routes.ts — solo wiring
   features/     una carpeta por vista. Cada una exporta su Page desde index.ts
-  shared/       ui/ (componentes puros), layout/, hooks/, lib/, types/domain.ts
-  services/     acceso a datos: supabase/client.ts + un repositorio por entidad
-  mocks/        datos de demo (Carlos Mendoza, Toyota Corolla, tokens TOK-2025-*)
-supabase/migrations/   SQL versionado. Reflejar en domain.ts
+  shared/ui/    Button Card Badge Modal ProgressBar Input/Select Skeleton EmptyState — importar desde '@/shared/ui'
+  shared/hooks/ useAsync (loading/error/datos) · useSuscripcion (realtime → recargar)
+  shared/lib/   format (fechas/montos) · simular (esperas demo) · tributos (cálculo) · vencimientos
+  shared/types/domain.ts
+  services/     un repo por entidad, cada uno con impl. mock + supabase. Nunca importar supabase/client desde features
+  mocks/        datos de demo con IDs fijos (ids.ts) que coinciden con supabase/seed.sql
+supabase/       migrations/ (esquema) · seed.sql (demo, idempotente, fechas relativas)
 docs/           documentación viva del proyecto
 ```
 
@@ -51,7 +54,9 @@ docs/           documentación viva del proyecto
 - **Tipos en `shared/types/domain.ts`** son la verdad. Cambiar tipo ⇒ cambiar migración.
 - **Rutas desde `app/routes.ts`**, nunca strings sueltos.
 - `npm run build` verde antes de pushear. Commits en español, formato Conventional Commits.
-- Los datos del ciudadano demo (Carlos Mendoza, CI 8.234.567 SC) viven en `src/mocks/`; no inventar otros.
+- Los datos del ciudadano demo (Carlos Mendoza, CI 8.234.567 SC) viven en `src/mocks/datos.ts` y `supabase/seed.sql`; no inventar otros.
+- Leer datos en una feature = `useAsync(() => xRepo.listar(...))`. Sin `useEffect` + `fetch` a mano.
+- Estado (vigente/por_vencer/vencido) se deriva de la fecha al leer (`lib/vencimientos`), no se persiste.
 
 ## Cómo agregar una feature nueva
 

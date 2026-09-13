@@ -6,9 +6,21 @@
 git clone https://github.com/germancsaid/CarpetaCiudadana.git
 cd CarpetaCiudadana
 npm install
-cp .env.example .env.local     # pedir credenciales de Supabase, o dejar VITE_USE_MOCKS=true
+cp .env.example .env.local     # ya trae las credenciales del proyecto Supabase del equipo
 npm run dev
 ```
+
+## Base de datos (Supabase)
+
+Proyecto: **carpeta-ciudadana** (`jqpjowojidbowsapmtgu`, sa-east-1). Esquema en `supabase/migrations/`,
+datos de demo en `supabase/seed.sql`. Ya está aplicado y cargado.
+
+**Resetear la demo al estado inicial** (antes de un ensayo, o si alguien rompió datos): correr
+`supabase/seed.sql` completo en el SQL Editor del dashboard. Es idempotente y usa fechas relativas
+a `now()`, así que la demo siempre se ve fresca ("hace 2 horas", "vence en 8 días").
+
+Si cambiás el esquema: nueva migración numerada en `supabase/migrations/`, actualizar
+`src/shared/types/domain.ts` y `docs/DATA_MODEL.md` en el mismo commit.
 
 ## Reparto por feature (trabajo en paralelo sin conflictos)
 
