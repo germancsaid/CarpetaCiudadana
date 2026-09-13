@@ -1,42 +1,198 @@
 @import 'tailwindcss';
 
 /*
- * Design system — fuente de verdad de colores y tipografía.
- * Usar SIEMPRE estos tokens vía clases Tailwind (bg-sidebar, text-accent, etc.).
- * Nunca hardcodear hex en componentes. Ver docs/CONVENTIONS.md.
+ * Design system — fuente de verdad de color, tipografía, radios y movimiento.
+ * Usar SIEMPRE los tokens vía clases Tailwind (bg-card, text-ink-muted, rounded-card…).
+ * Nunca hardcodear hex en componentes. Ver docs/CONVENTIONS.md y docs/BRIEF_DISENO_APPLE_DEMO.md.
+ *
+ * Los valores viven en variables CSS planas (--c-*) para poder cambiarlos en runtime
+ * (modo oscuro); @theme inline las expone como utilidades de Tailwind.
  */
-@theme {
-  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
 
-  --color-sidebar: #0f1117;
-  --color-page: #f7f8fa;
-  --color-card: #ffffff;
-  --color-border: #e2e5eb;
+/* ── Paleta clara (por defecto) ──────────────────────────────────────────── */
+:root {
+  color-scheme: light;
 
-  --color-accent: #1a5cff;
-  --color-accent-light: #eef2ff;
-  --color-accent-text: #1a3db5;
+  --c-page: #f5f5f7;          /* gris agrupado de iOS/macOS */
+  --c-card: #ffffff;
+  --c-card-2: #f5f5f7;        /* superficie secundaria dentro de una card */
+  --c-border: #e5e5ea;
+  --c-sidebar: #0b0b0c;
 
-  --color-success: #0ea87a;
-  --color-success-light: #e6f9f3;
-  --color-success-text: #076b4f;
+  --c-accent: #0e8c7a;        /* teal del proyecto, ajustado a contraste AA */
+  --c-accent-light: #e4f4f1;
+  --c-accent-text: #0a6b5d;
 
-  --color-warning: #d97706;
-  --color-warning-light: #fef3e2;
-  --color-warning-text: #92520a;
+  --c-success: #34c759;       /* verde sistema */
+  --c-success-light: #e9f9ee;
+  --c-success-text: #1d7a37;
 
-  --color-danger: #dc2626;
-  --color-danger-light: #fef2f2;
-  --color-danger-text: #991b1b;
+  --c-warning: #ff9f0a;       /* ámbar sistema */
+  --c-warning-light: #fff4e0;
+  --c-warning-text: #9a5b00;
 
-  --color-ink: #0f1117;
-  --color-ink-secondary: #3b3f4a;
-  --color-ink-muted: #727785;
+  --c-danger: #ff3b30;        /* rojo sistema */
+  --c-danger-light: #ffecea;
+  --c-danger-text: #b3261e;
 
-  --radius-card: 12px;
-  --radius-control: 8px;
+  --c-ink: #1d1d1f;
+  --c-ink-secondary: #3b3f4a;
+  --c-ink-muted: #6e6e73;
+
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.04), 0 8px 24px rgb(0 0 0 / 0.06);
+  --shadow-card-hover: 0 2px 4px rgb(0 0 0 / 0.05), 0 16px 40px rgb(0 0 0 / 0.1);
+  --shadow-sheet: 0 24px 80px rgb(0 0 0 / 0.25);
 }
 
+/* ── Paleta oscura: negro real de fondo, superficies elevadas en gris ─────── */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --c-page: #000000;
+  --c-card: #1c1c1e;
+  --c-card-2: #2c2c2e;
+  --c-border: #2c2c2e;
+  --c-sidebar: #0b0b0c;
+  --c-accent: #34d3b8;
+  --c-accent-light: rgb(52 211 184 / 0.16);
+  --c-accent-text: #6fe6d0;
+  --c-success: #30d158;
+  --c-success-light: rgb(48 209 88 / 0.16);
+  --c-success-text: #6ee38b;
+  --c-warning: #ffd60a;
+  --c-warning-light: rgb(255 214 10 / 0.14);
+  --c-warning-text: #ffe066;
+  --c-danger: #ff453a;
+  --c-danger-light: rgb(255 69 58 / 0.16);
+  --c-danger-text: #ff8078;
+  --c-ink: #f5f5f7;
+  --c-ink-secondary: #c7c7cc;
+  --c-ink-muted: #8e8e93;
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px rgb(0 0 0 / 0.5);
+  --shadow-card-hover: 0 2px 4px rgb(0 0 0 / 0.5), 0 16px 40px rgb(0 0 0 / 0.6);
+  --shadow-sheet: 0 24px 80px rgb(0 0 0 / 0.7);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --c-page: #000000;
+    --c-card: #1c1c1e;
+    --c-card-2: #2c2c2e;
+    --c-border: #2c2c2e;
+    --c-sidebar: #0b0b0c;
+    --c-accent: #34d3b8;
+    --c-accent-light: rgb(52 211 184 / 0.16);
+    --c-accent-text: #6fe6d0;
+    --c-success: #30d158;
+    --c-success-light: rgb(48 209 88 / 0.16);
+    --c-success-text: #6ee38b;
+    --c-warning: #ffd60a;
+    --c-warning-light: rgb(255 214 10 / 0.14);
+    --c-warning-text: #ffe066;
+    --c-danger: #ff453a;
+    --c-danger-light: rgb(255 69 58 / 0.16);
+    --c-danger-text: #ff8078;
+    --c-ink: #f5f5f7;
+    --c-ink-secondary: #c7c7cc;
+    --c-ink-muted: #8e8e93;
+    --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px rgb(0 0 0 / 0.5);
+    --shadow-card-hover: 0 2px 4px rgb(0 0 0 / 0.5), 0 16px 40px rgb(0 0 0 / 0.6);
+    --shadow-sheet: 0 24px 80px rgb(0 0 0 / 0.7);
+  }
+}
+
+/* Variante `dark:` de Tailwind: sigue el data-theme o, si no hay, el sistema. */
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+/* ── Tokens expuestos a Tailwind ─────────────────────────────────────────── */
+@theme inline {
+  --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Segoe UI', Roboto,
+    Helvetica, Arial, sans-serif;
+
+  --color-page: var(--c-page);
+  --color-card: var(--c-card);
+  --color-card-2: var(--c-card-2);
+  --color-border: var(--c-border);
+  --color-sidebar: var(--c-sidebar);
+  --color-accent: var(--c-accent);
+  --color-accent-light: var(--c-accent-light);
+  --color-accent-text: var(--c-accent-text);
+  --color-success: var(--c-success);
+  --color-success-light: var(--c-success-light);
+  --color-success-text: var(--c-success-text);
+  --color-warning: var(--c-warning);
+  --color-warning-light: var(--c-warning-light);
+  --color-warning-text: var(--c-warning-text);
+  --color-danger: var(--c-danger);
+  --color-danger-light: var(--c-danger-light);
+  --color-danger-text: var(--c-danger-text);
+  --color-ink: var(--c-ink);
+  --color-ink-secondary: var(--c-ink-secondary);
+  --color-ink-muted: var(--c-ink-muted);
+
+  --radius-control: 12px;   /* botones, inputs */
+  --radius-card: 16px;      /* tarjetas */
+  --radius-sheet: 28px;     /* modales / sheets */
+
+  --shadow-card: var(--shadow-card);
+  --shadow-card-hover: var(--shadow-card-hover);
+  --shadow-sheet: var(--shadow-sheet);
+
+  --ease-suave: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-rebote: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --animate-aparecer: aparecer 260ms var(--ease-suave) both;
+  --animate-subir: subir 320ms var(--ease-suave) both;
+  --animate-fundir: fundir 200ms var(--ease-suave) both;
+  --animate-latir: latir 1.4s ease-in-out infinite;
+  --animate-escaneo: escaneo 1.2s ease-in-out infinite;
+  --animate-halo: halo 2.4s ease-out 1;
+  --animate-entrar-lista: entrar-lista 400ms var(--ease-suave) both;
+
+  @keyframes aparecer { from { opacity: 0; transform: scale(0.96) translateY(8px) } to { opacity: 1; transform: none } }
+  @keyframes subir { from { opacity: 0; transform: translateY(100%) } to { opacity: 1; transform: none } }
+  @keyframes fundir { from { opacity: 0 } to { opacity: 1 } }
+  @keyframes latir { 0%, 100% { opacity: 1 } 50% { opacity: 0.55 } }
+  @keyframes escaneo { 0% { top: 0 } 50% { top: calc(100% - 2px) } 100% { top: 0 } }
+  @keyframes halo {
+    0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--c-accent) 60%, transparent) }
+    70% { box-shadow: 0 0 0 14px transparent }
+    100% { box-shadow: 0 0 0 0 transparent }
+  }
+  @keyframes entrar-lista { from { opacity: 0; transform: translateY(12px) } to { opacity: 1; transform: none } }
+}
+
+/* ── Base ────────────────────────────────────────────────────────────────── */
 body {
   @apply bg-page text-ink font-sans antialiased;
+  font-size: 15px;
+  transition: background-color 300ms var(--ease-suave), color 300ms var(--ease-suave);
+}
+
+/* Foco visible para navegación por teclado, sin ensuciar el click con mouse. */
+:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Todo lo interactivo responde al toque en <100 ms. */
+@utility presionable {
+  transition: transform 120ms var(--ease-suave), box-shadow 200ms var(--ease-suave), background-color 160ms;
+  &:active { transform: scale(0.97) }
+}
+
+@utility elevable {
+  transition: transform 200ms var(--ease-suave), box-shadow 200ms var(--ease-suave);
+  &:hover { transform: translateY(-2px); box-shadow: var(--shadow-card-hover) }
+}
+
+@utility vidrio {
+  background-color: color-mix(in srgb, var(--c-card) 72%, transparent);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important }
 }

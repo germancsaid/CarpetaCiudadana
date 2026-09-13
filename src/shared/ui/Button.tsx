@@ -1,32 +1,37 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
 
-type Variante = 'primario' | 'secundario' | 'fantasma' | 'peligro'
-type Tamano = 'sm' | 'md'
+type Variante = 'primario' | 'secundario' | 'fantasma' | 'peligro' | 'sutil'
+type Tamano = 'sm' | 'md' | 'lg'
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variante?: Variante
   tamano?: Tamano
   cargando?: boolean
   iconoIzq?: ReactNode
+  /** Pulso suave mientras carga, en vez de spinner (patrón Apple). */
+  pulso?: boolean
   children: ReactNode
 }
 
 const VARIANTES: Record<Variante, string> = {
-  primario: 'bg-accent text-white hover:bg-accent/90',
-  secundario: 'bg-card text-ink border border-border hover:bg-page',
-  fantasma: 'bg-transparent text-ink-secondary hover:bg-page',
-  peligro: 'bg-danger text-white hover:bg-danger/90',
+  primario: 'bg-accent text-white hover:brightness-110 shadow-sm',
+  secundario: 'bg-card text-ink shadow-card hover:bg-card-2',
+  sutil: 'bg-accent-light text-accent-text hover:brightness-95 dark:hover:brightness-125',
+  fantasma: 'bg-transparent text-ink-secondary hover:bg-card-2',
+  peligro: 'bg-danger text-white hover:brightness-110',
 }
 
 const TAMANOS: Record<Tamano, string> = {
-  sm: 'min-h-9 px-3 text-sm',
-  md: 'min-h-11 px-4 text-sm',
+  sm: 'min-h-9 px-3.5 text-[13px]',
+  md: 'min-h-11 px-4 text-[15px]',
+  lg: 'min-h-12 px-6 text-base',
 }
 
 export function Button({
   variante = 'primario',
   tamano = 'md',
   cargando = false,
+  pulso = false,
   iconoIzq,
   children,
   className = '',
@@ -37,9 +42,10 @@ export function Button({
     <button
       {...rest}
       disabled={disabled || cargando}
-      className={`inline-flex items-center justify-center gap-2 rounded-control font-medium transition active:scale-[.98] disabled:cursor-not-allowed disabled:opacity-50 ${VARIANTES[variante]} ${TAMANOS[tamano]} ${className}`}
+      aria-busy={cargando || undefined}
+      className={`presionable inline-flex items-center justify-center gap-2 rounded-control font-semibold disabled:cursor-not-allowed disabled:opacity-50 ${cargando && pulso ? 'animate-latir' : ''} ${VARIANTES[variante]} ${TAMANOS[tamano]} ${className}`}
     >
-      {cargando ? <Spinner /> : iconoIzq}
+      {cargando && !pulso ? <Spinner /> : iconoIzq}
       {children}
     </button>
   )

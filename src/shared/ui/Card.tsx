@@ -1,14 +1,16 @@
-import type { ReactNode } from 'react'
+import type { HTMLAttributes, ReactNode } from 'react'
 
-interface CardProps {
+interface CardProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode
   className?: string
+  /** Se eleva al pasar el mouse. Para cards clickeables o que quieran sentirse físicas. */
+  elevable?: boolean
 }
 
-/** Contenedor blanco estándar. Toda superficie de contenido usa esto. */
-export function Card({ children, className = '' }: CardProps) {
+/** Superficie elevada estándar. Sin borde: la separación la da la sombra y el espacio. */
+export function Card({ children, className = '', elevable = false, ...rest }: CardProps) {
   return (
-    <div className={`rounded-card border border-border bg-card shadow-sm ${className}`}>
+    <div {...rest} className={`rounded-card bg-card shadow-card ${elevable ? 'elevable' : ''} ${className}`}>
       {children}
     </div>
   )
@@ -22,9 +24,9 @@ interface CardHeaderProps {
 
 export function CardHeader({ titulo, descripcion, accion }: CardHeaderProps) {
   return (
-    <div className="flex items-start justify-between gap-4 border-b border-border p-5">
+    <div className="flex items-start justify-between gap-4 px-5 pt-5 pb-3">
       <div>
-        <h2 className="font-semibold text-ink">{titulo}</h2>
+        <h2 className="text-[17px] font-semibold text-ink">{titulo}</h2>
         {descripcion && <p className="mt-0.5 text-sm text-ink-muted">{descripcion}</p>}
       </div>
       {accion}

@@ -8,16 +8,16 @@ interface EmptyStateProps {
   accion?: ReactNode
 }
 
-/** Estado vacío estándar. Toda lista debe tener uno (ver SPEC). */
+/** Estado vacío estándar: ilustración en línea, texto corto, un solo CTA. */
 export function EmptyState({ icono: Icono, titulo, descripcion, accion }: EmptyStateProps) {
   return (
-    <div className="flex flex-col items-center rounded-card border border-dashed border-border bg-card p-10 text-center">
-      <div className="mb-3 flex size-12 items-center justify-center rounded-full bg-page text-ink-muted">
-        <Icono size={22} />
+    <div className="flex flex-col items-center rounded-card bg-card p-12 text-center shadow-card animate-aparecer">
+      <div className="mb-4 flex size-16 items-center justify-center rounded-full bg-accent-light text-accent-text">
+        <Icono size={28} strokeWidth={1.75} />
       </div>
-      <h3 className="font-semibold text-ink">{titulo}</h3>
+      <h3 className="text-[17px] font-semibold text-ink">{titulo}</h3>
       <p className="mt-1 max-w-sm text-sm text-ink-muted">{descripcion}</p>
-      {accion && <div className="mt-4">{accion}</div>}
+      {accion && <div className="mt-5">{accion}</div>}
     </div>
   )
 }
