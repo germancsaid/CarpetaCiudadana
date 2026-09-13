@@ -1,5 +1,5 @@
 import { useRef, useState, type DragEvent } from 'react'
-import { UploadCloud, ScanLine, FileCheck2 } from 'lucide-react'
+import { UploadCloud, ScanLine, FileCheck2, FileStack } from 'lucide-react'
 import type { Documento } from '@/shared/types/domain'
 import { documentosRepo } from '@/services/documentos'
 import { CIUDADANO_ACTUAL } from '@/services/ciudadanos'
@@ -16,6 +16,14 @@ interface Props {
 
 const MAX_MB = 10
 const FORMATOS = ['application/pdf', 'image/jpeg', 'image/png']
+
+/** Documentos de ejemplo listos para el demo — sin necesitar un archivo real a mano. */
+const EJEMPLOS: { nombreArchivo: string; campos: Record<string, string> }[] = [
+  { nombreArchivo: 'factura_cre_agosto.pdf', campos: { Documento: 'Factura de servicios', Emisor: 'CRE Ltda.', Periodo: '08/2026', Monto: 'Bs. 342' } },
+  { nombreArchivo: 'certificado_catastral.pdf', campos: { Documento: 'Certificado catastral', Padron: 'SCZ-00891234', Zona: 'Equipetrol', Superficie: '320 m²' } },
+  { nombreArchivo: 'poder_notarial_venta.pdf', campos: { Documento: 'Poder notarial', Notaria: 'N°14 Santa Cruz', Otorgante: 'Carlos Mendoza Vargas', Vigencia: '1 año' } },
+  { nombreArchivo: 'comprobante_ruat.jpg', campos: { Documento: 'Comprobante RUAT', Placa: '2345-SCC', Gestion: '2026', Estado: 'Al día' } },
+]
 
 export function SubirDocumentoModal({ abierto, onCerrar, onGuardado }: Props) {
   const [fase, setFase] = useState<Fase>('esperando')
@@ -55,6 +63,19 @@ export function SubirDocumentoModal({ abierto, onCerrar, onGuardado }: Props) {
     if (f) void procesar(f)
   }
 
+  /** Atajo para el demo: simula el mismo flujo (subida → OCR) sin necesitar un archivo real. */
+  async function usarEjemplo(ej: (typeof EJEMPLOS)[number]) {
+    setErrorArchivo(undefined)
+    setArchivo(ej.nombreArchivo)
+    setFase('subiendo')
+    await esperar(DEMORA.subida)
+    setFase('ocr')
+    await esperar(DEMORA.ocr)
+    setCampos(ej.campos)
+    setNombre(ej.campos.Documento ?? ej.nombreArchivo.replace(/\.[^.]+$/, ''))
+    setFase('preview')
+  }
+
   async function guardar() {
     if (nombre.trim().length < 3) return setErrorNombre('Poné un nombre de al menos 3 caracteres.')
     setGuardando(true)
@@ -89,6 +110,20 @@ export function SubirDocumentoModal({ abierto, onCerrar, onGuardado }: Props) {
           <input ref={input} type="file" accept=".pdf,.jpg,.jpeg,.png" className="hidden"
                  onChange={(e) => { const f = e.target.files?.[0]; if (f) void procesar(f) }} />
           {errorArchivo && <p className="mt-2 text-sm text-danger">{errorArchivo}</p>}
+
+          <div className="mt-5 border-t border-border pt-4">
+            <div className="mb-2 flex items-center gap-1.5 text-xs font-medium text-ink-muted">
+              <FileStack size={13} /> O usá un documento de ejemplo para la demo
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {EJEMPLOS.map((ej) => (
+                <button key={ej.nombreArchivo} onClick={() => void usarEjemplo(ej)}
+                        className="presionable rounded-full border border-border bg-page px-3 py-1.5 text-xs font-medium text-ink-secondary hover:border-accent hover:text-accent-text">
+                  {ej.campos.Documento}
+                </button>
+              ))}
+            </div>
+          </div>
         </>
       )}
 

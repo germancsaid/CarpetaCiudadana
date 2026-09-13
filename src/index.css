@@ -73,34 +73,13 @@
   --shadow-sheet: 0 24px 80px rgb(0 0 0 / 0.7);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
-    color-scheme: dark;
-    --c-page: #000000;
-    --c-card: #1c1c1e;
-    --c-card-2: #2c2c2e;
-    --c-border: #2c2c2e;
-    --c-sidebar: #0b0b0c;
-    --c-accent: #2997ff;
-    --c-accent-light: rgb(41 151 255 / 0.16);
-    --c-accent-text: #6cb6ff;
-    --c-success: #30d158;
-    --c-success-light: rgb(48 209 88 / 0.16);
-    --c-success-text: #6ee38b;
-    --c-warning: #ffd60a;
-    --c-warning-light: rgb(255 214 10 / 0.14);
-    --c-warning-text: #ffe066;
-    --c-danger: #ff453a;
-    --c-danger-light: rgb(255 69 58 / 0.16);
-    --c-danger-text: #ff8078;
-    --c-ink: #f5f5f7;
-    --c-ink-secondary: #c7c7cc;
-    --c-ink-muted: #8e8e93;
-    --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px rgb(0 0 0 / 0.5);
-    --shadow-card-hover: 0 2px 4px rgb(0 0 0 / 0.5), 0 16px 40px rgb(0 0 0 / 0.6);
-    --shadow-sheet: 0 24px 80px rgb(0 0 0 / 0.7);
-  }
-}
+/*
+ * La demo pide look "Apple.com": siempre claro, sin importar el modo del
+ * sistema operativo/navegador de quien esté presentando. Por eso NO hay
+ * @media (prefers-color-scheme: dark) acá — el tema oscuro de arriba sigue
+ * disponible sólo si algo pone explícitamente data-theme="dark" en <html>
+ * (hoy nada lo hace; useTema.ts queda listo por si se agrega un toggle).
+ */
 
 /* Variante `dark:` de Tailwind: sigue el data-theme o, si no hay, el sistema. */
 @custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
