@@ -7,6 +7,7 @@ import { documentosRepo } from '@/services/documentos'
 import { vinculosRepo } from '@/services/vinculos'
 import { CIUDADANO_ACTUAL } from '@/services/ciudadanos'
 import { NAV } from './nav'
+import { RoadmapNav } from './RoadmapNav'
 
 interface Notificacion {
   id: string
@@ -52,19 +53,22 @@ export function TopBar() {
   const titulo = item?.titulo ?? 'CarpetaCiudadana'
 
   return (
-    <header className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-card px-4 py-3 md:px-8">
-      <div>
-        <div className="flex items-center gap-1 text-xs text-ink-muted">
-          <span>CarpetaCiudadana</span>
-          <ChevronRight size={12} />
-          <span>{item?.label ?? ''}</span>
+    <header className="vidrio sticky top-0 z-30 flex flex-col gap-3 border-b border-border px-4 py-3 md:px-8">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <div className="flex items-center gap-1 text-xs text-ink-muted">
+            <span>CarpetaCiudadana</span>
+            <ChevronRight size={12} />
+            <span>{item?.label ?? ''}</span>
+          </div>
+          <h1 className="text-xl font-semibold tracking-tight text-ink">{titulo}</h1>
         </div>
-        <h1 className="text-xl font-semibold text-ink">{titulo}</h1>
+        <div className="flex items-center gap-2">
+          <Buscador />
+          <Notificaciones />
+        </div>
       </div>
-      <div className="flex items-center gap-2">
-        <Buscador />
-        <Notificaciones />
-      </div>
+      <RoadmapNav />
     </header>
   )
 }

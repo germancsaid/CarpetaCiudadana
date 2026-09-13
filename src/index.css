@@ -188,6 +188,11 @@ body {
   &:hover { transform: translateY(-2px); box-shadow: var(--shadow-card-hover) }
 }
 
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none }
+}
+
 @utility vidrio {
   background-color: color-mix(in srgb, var(--c-card) 72%, transparent);
   backdrop-filter: blur(20px) saturate(1.4);
