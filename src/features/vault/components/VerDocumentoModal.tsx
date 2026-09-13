@@ -1,14 +1,13 @@
 import type { Documento } from '@/shared/types/domain'
 import { formatFecha } from '@/shared/lib/format'
-import { Badge, Icono, Modal } from '@/shared/ui'
+import { Badge, Modal } from '@/shared/ui'
+import { DocumentoPreview } from './DocumentoPreview'
 
 export function VerDocumentoModal({ doc, onCerrar }: { doc: Documento | null; onCerrar: () => void }) {
   if (!doc) return null
   return (
-    <Modal abierto onCerrar={onCerrar} titulo={doc.nombre} descripcion={doc.tipo}>
-      <div className="flex h-40 items-center justify-center rounded-card border border-dashed border-border bg-page text-ink-muted">
-        <Icono nombre={doc.icono} size={40} />
-      </div>
+    <Modal abierto onCerrar={onCerrar} titulo={doc.nombre} descripcion={doc.tipo} tamano="lg">
+      <DocumentoPreview doc={doc} />
       <div className="mt-4 flex items-center justify-between text-sm">
         <span className="text-ink-secondary">Emitido {formatFecha(doc.emitidoEn)} · Vence {doc.venceEn ? formatFecha(doc.venceEn) : 'nunca'}</span>
         <Badge estado={doc.estado} />

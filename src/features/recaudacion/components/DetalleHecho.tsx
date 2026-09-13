@@ -4,7 +4,7 @@ import { confirmarPagoDesdeMunicipio } from '@/services/traspaso'
 import { TIPO_CAMBIO_BS } from '@/shared/lib/tributos'
 import { formatBs, formatUsd, formatFechaHora } from '@/shared/lib/format'
 import { esperar, DEMORA } from '@/shared/lib/simular'
-import { Button, Modal } from '@/shared/ui'
+import { Button, Modal, QrCode } from '@/shared/ui'
 
 interface Props {
   hecho: HechoImponible | null
@@ -61,6 +61,20 @@ export function DetalleHecho({ hecho, onCerrar, onCambio }: Props) {
         <Fila k="Arancel municipal de trámite" v={formatBs(hecho.arancelBs)} />
         <Fila k="Total a recaudar" v={formatBs(hecho.totalBs)} fuerte />
       </div>
+
+      {hecho.estado !== 'pagado' && (
+        <div className="mt-4 flex flex-col items-center gap-3 rounded-card border border-dashed border-border bg-page p-5 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <div className="text-sm font-semibold text-ink">Pago QR — Sistema de Pagos Unificado</div>
+            <div className="mt-0.5 text-xs text-ink-muted">
+              El obligado escanea con su banca móvil y paga {formatBs(hecho.totalBs)} directo a {hecho.municipio}.
+            </div>
+            <div className="mt-0.5 text-[11px] text-ink-muted">Folio {hecho.id.slice(0, 8).toUpperCase()} · simulado para la demo</div>
+          </div>
+          <QrCode valor={`CARPETACIUDADANA|MUNICIPIO:${hecho.municipio}|FOLIO:${hecho.id}|BIEN:${hecho.descripcionBien}|TOTAL_BS:${hecho.totalBs}`} tamano={140} />
+        </div>
+      )}
+
       <div className="mt-4 rounded-card bg-page p-3 text-xs text-ink-muted">
         Generado {formatFechaHora(hecho.generadoEn)} · {hecho.municipio}
         {hecho.pagadoEn && <> · Pagado {formatFechaHora(hecho.pagadoEn)}</>}

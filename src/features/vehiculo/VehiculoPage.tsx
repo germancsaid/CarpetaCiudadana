@@ -8,6 +8,8 @@ import { Partes } from './components/Partes'
 import { Timeline } from './components/Timeline'
 import { InfoVehiculo } from './components/InfoVehiculo'
 import { FlujoToken } from './components/FlujoToken'
+import { VerificacionCruzada } from './components/VerificacionCruzada'
+import { PagoTraspaso } from './components/PagoTraspaso'
 
 export function VehiculoPage() {
   const { datos, cargando, recargar } = useAsync(async () =>
@@ -15,6 +17,7 @@ export function VehiculoPage() {
   useSuscripcion(tramitesRepo.suscribir, recargar)
   const actual = datos ? pasoActual(datos) : undefined
   const estadoCompradora = datos?.estado === 'completado' ? 'Traspaso completado — ya es la titular' : actual ? `Vinculada al trámite — esperando paso ${actual.orden}` : 'Vinculada al trámite'
+  const pasoPago = datos?.pasos.find((p) => p.montoBs != null)
 
   return (
     <div className="space-y-8">
@@ -26,8 +29,17 @@ export function VehiculoPage() {
           <h2 className="mb-3 font-semibold text-ink">Estado del trámite en vivo</h2>
           {cargando ? <SkeletonCard /> : datos ? <Timeline pasos={datos.pasos} /> : <p className="text-sm text-ink-muted">No hay un traspaso en curso.</p>}
         </section>
-        <section><h2 className="mb-3 font-semibold text-ink">El vehículo</h2><InfoVehiculo /></section>
+        <section className="space-y-6">
+          <div><h2 className="mb-3 font-semibold text-ink">El vehículo</h2><InfoVehiculo /></div>
+          <VerificacionCruzada />
+        </section>
       </div>
+      {pasoPago && (
+        <section>
+          <h2 className="mb-3 font-semibold text-ink">Pago del arancel</h2>
+          <PagoTraspaso paso={pasoPago} />
+        </section>
+      )}
       <FlujoToken />
     </div>
   )

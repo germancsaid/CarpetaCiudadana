@@ -13,15 +13,16 @@
 :root {
   color-scheme: light;
 
-  --c-page: #f5f5f7;          /* gris agrupado de iOS/macOS */
+  /* Paleta calcada de apple.com: fondo #fbfbfd, texto #1d1d1f, acento #0071e3, gris #86868b. */
+  --c-page: #fbfbfd;
   --c-card: #ffffff;
   --c-card-2: #f5f5f7;        /* superficie secundaria dentro de una card */
-  --c-border: #e5e5ea;
-  --c-sidebar: #0b0b0c;
+  --c-border: #d2d2d7;
+  --c-sidebar: #1d1d1f;
 
-  --c-accent: #0e8c7a;        /* teal del proyecto, ajustado a contraste AA */
-  --c-accent-light: #e4f4f1;
-  --c-accent-text: #0a6b5d;
+  --c-accent: #0071e3;        /* azul de apple.com (enlaces, CTAs) */
+  --c-accent-light: #e8f2fd;
+  --c-accent-text: #0058b0;
 
   --c-success: #34c759;       /* verde sistema */
   --c-success-light: #e9f9ee;
@@ -36,8 +37,8 @@
   --c-danger-text: #b3261e;
 
   --c-ink: #1d1d1f;
-  --c-ink-secondary: #3b3f4a;
-  --c-ink-muted: #6e6e73;
+  --c-ink-secondary: #424245;
+  --c-ink-muted: #86868b;     /* gris secundario de apple.com */
 
   --shadow-card: 0 1px 2px rgb(0 0 0 / 0.04), 0 8px 24px rgb(0 0 0 / 0.06);
   --shadow-card-hover: 0 2px 4px rgb(0 0 0 / 0.05), 0 16px 40px rgb(0 0 0 / 0.1);
@@ -52,9 +53,9 @@
   --c-card-2: #2c2c2e;
   --c-border: #2c2c2e;
   --c-sidebar: #0b0b0c;
-  --c-accent: #34d3b8;
-  --c-accent-light: rgb(52 211 184 / 0.16);
-  --c-accent-text: #6fe6d0;
+  --c-accent: #2997ff;        /* azul de apple.com/dark (enlaces en modo oscuro) */
+  --c-accent-light: rgb(41 151 255 / 0.16);
+  --c-accent-text: #6cb6ff;
   --c-success: #30d158;
   --c-success-light: rgb(48 209 88 / 0.16);
   --c-success-text: #6ee38b;
@@ -80,9 +81,9 @@
     --c-card-2: #2c2c2e;
     --c-border: #2c2c2e;
     --c-sidebar: #0b0b0c;
-    --c-accent: #34d3b8;
-    --c-accent-light: rgb(52 211 184 / 0.16);
-    --c-accent-text: #6fe6d0;
+    --c-accent: #2997ff;
+    --c-accent-light: rgb(41 151 255 / 0.16);
+    --c-accent-text: #6cb6ff;
     --c-success: #30d158;
     --c-success-light: rgb(48 209 88 / 0.16);
     --c-success-text: #6ee38b;
